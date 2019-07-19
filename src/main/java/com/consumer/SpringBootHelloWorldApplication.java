@@ -20,7 +20,6 @@ public class SpringBootHelloWorldApplication {
 		ConsumerControllerBook consumerControllerBook=ctx.getBean(ConsumerControllerBook.class);
 		System.out.println(consumerControllerBook);
 		consumerControllerBook.getBook();
-		
 	}
 	
 	@Bean

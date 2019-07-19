@@ -1,10 +1,11 @@
 package com.consumer.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -15,19 +16,24 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 
+
+
 @Controller
 public class ConsumerControllerBook {
 	
 	@Autowired
-	private LoadBalancerClient loadBalancer;
+	private DiscoveryClient discoveryClient;
+	
 	
 	public void getBook() throws RestClientException, IOException {
 		
-		ServiceInstance serviceInstance=loadBalancer.choose("book-producer");
+		
+		List<ServiceInstance> instances = discoveryClient.getInstances("ZUUL-SERVER");
+		ServiceInstance serviceInstance = instances.get(0);
 		System.out.println(serviceInstance.getUri());
 		
 		String baseUrl=serviceInstance.getUri().toString();
-		baseUrl=baseUrl+"/books";
+		baseUrl = baseUrl + "book-producer/books";
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response=null;
 		try{
